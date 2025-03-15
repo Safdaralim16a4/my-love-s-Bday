@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday, My Eternal Love</title>
+    <style>
+        /* General Styles */
+        html {
+            scroll-behavior: smooth; /* Enable smooth scrolling */
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #1C2526;
+            color: #fff;
+            font-family: 'Great Vibes', cursive;
+            overflow-x: hidden;
+            line-height: 1.6;
+            /* Optimize for smooth scrolling */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Night Sky Background */
+        .night-sky {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/stardust.png') repeat, #1C2526;
+            z-index: -3; /* Lowest layer */
+        }
+
+        /* Stars */
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -2; /* Above night-sky but below hearts and moon */
+        }
+
+        .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            will-change: opacity; /* Optimize for animation */
+            animation: twinkle 4s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Moon with Gradient Only */
+        .moon {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 150px;
+            height: 150px;
+            background: #e0e0e0; /* Fallback color */
+            background: -webkit-radial-gradient(circle at 70% 30%, #e0e0e0 40%, #b0b0b0 60%, transparent 70%); /* Chrome-specific */
+            background: radial-gradient(circle at 70% 30%, #e0e0e0 40%, #b0b0b0 60%, transparent 70%); /* Standard */
+            border-radius: 50%;
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.5); /* Brighter glow */
+            opacity: 1; /* Full opacity */
+            z-index: 10; /* Above everything except popup */
+            will-change: box-shadow;
+            animation: glow 6s infinite ease-in-out;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 40px rgba(255, 255, 255, 0.5); }
+            50% { box-shadow: 0 0 60px rgba(255, 255, 255, 0.7); }
+        }
+
+        /* Hearts Background for Entire Website */
+        .hearts-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Below moon and content */
+            pointer-events: none;
+        }
+
+        .hearts-background .heart {
+            position: absolute;
+            width: 20px; /* Default size, will be overridden by JS */
+            height: 20px;
+            background: none; /* Remove background to use SVG */
+            animation: floatHearts 4s infinite ease-in-out; /* Add floating animation */
+            opacity: 0.5; /* As previously set */
+        }
+
+        /* Container */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 5rem;
+            margin-bottom: 60px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            will-change: transform, opacity;
+            animation: fadeInDown 2.5s ease-in-out;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-80px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(80px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-150px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes borderAnimation {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+            100% { background-position: 0% 0%; }
+        }
+
+        @keyframes fadeInPopup {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        @keyframes floatHearts {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+
+        .quote, .paragraph {
+            font-size: 2.2rem;
+            margin: 40px 0;
+            opacity: 0;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            position: relative;
+            transition: background 0.3s ease;
+            will-change: transform, opacity;
+        }
+
+        .paragraph {
+            font-size: 2.8rem;
+            margin: 60px 0;
+            line-height: 1.4;
+        }
+
+        .quote.visible, .paragraph.visible {
+            opacity: 1;
+            animation: fadeInUp 1.8s ease-in-out;
+        }
+
+        .paragraph.visible {
+            animation: slideInLeft 2s ease-in-out;
+        }
+
+        .quote:hover, .paragraph:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Individual Animation for Each Quote and Paragraph */
+        .quote::before, .paragraph::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border: 3px solid transparent;
+            border-radius: 18px;
+            background: none;
+            z-index: -1;
+        }
+
+        .quote:hover::before, .paragraph:hover::before {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96c93d);
+            background-size: 400%;
+            animation: borderAnimation 8s infinite;
+        }
+
+        /* For You, My Love Section */
+        .gallery-section {
+            margin: 80px 0;
+        }
+
+        .gallery-section h2 {
+            font-size: 4rem;
+            margin-bottom: 50px;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+        }
+
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .gallery-box {
+            width: 250px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent);
+            border: 3px solid #fff;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+            will-change: transform, box-shadow;
+        }
+
+        .gallery-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensure image covers the box without distortion */
+            object-position: center; /* Center the image within the box */
+            border-radius: 17px;
+        }
+
+        /* Custom adjustment for the third image */
+        .gallery-box:nth-child(3) img {
+            object-fit: contain; /* Show entire image to ensure face is visible */
+            object-position: top; /* Prioritize the top (face) of the image */
+        }
+
+        .gallery-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .gallery-box:hover {
+            transform: scale(1.1) rotate(2deg);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
+        }
+
+        /* Overlay Text on Images */
+        .gallery-box .overlay-text {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.5); /* Semi-transparent background for readability */
+            color: #fff;
+            font-size: 1.5rem;
+            text-align: center;
+            padding: 10px;
+            border-radius: 0 0 17px 17px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-box:hover .overlay-text {
+            opacity: 1;
+        }
+
+        /* Surprise Box */
+        .surprise-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px 50px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 2rem;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.3s ease;
+            margin: 40px 0;
+        }
+
+        .surprise-box::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border: 3px solid transparent;
+            border-radius: 18px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96c93d);
+            background-size: 400%;
+            animation: borderAnimation 8s infinite;
+            z-index: -1;
+        }
+
+        .surprise-box:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Refined Popup */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(28, 37, 38, 0.8), rgba(50, 60, 61, 0.8)); /* Semi-transparent background */
+            padding: 60px;
+            border-radius: 25px;
+            max-width: 90vw; /* Ensure it fits on smaller screens */
+            max-height: 80vh;
+            overflow-y: auto;
+            text-align: center;
+            box-shadow: 0 0 70px rgba(255, 255, 255, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.1);
+            animation: zoomIn 0.8s ease-in-out;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            z-index: 1000;
+            position: relative; /* Ensure layering context */
+        }
+
+        .popup.active {
+            display: block;
+            opacity: 0;
+            animation: fadeInPopup 0.5s ease-in-out forwards;
+        }
+
+        .popup h2 {
+            font-size: 3.8rem;
+            margin-bottom: 40px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+            color: #f0e6d2;
+            position: relative;
+            z-index: 2; /* Ensure text is above hearts */
+        }
+
+        .popup p {
+            font-size: 2.2rem;
+            line-height: 1.6;
+            color: #f5f5f5;
+            position: relative;
+            z-index: 2; /* Ensure text is above hearts */
+        }
+
+        /* Heart Border as Background for Popup */
+        .heart-border {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1; /* Behind the text */
+            overflow: hidden; /* Prevent hearts from overflowing */
+        }
+
+        .heart-border .heart {
+            position: absolute;
+            width: 20px; /* Default size, will be overridden by JS */
+            height: 20px;
+            background: none; /* Remove background to use SVG */
+            animation: floatHearts 4s infinite ease-in-out; /* Add floating animation */
+            opacity: 0.5; /* As previously set */
+        }
+
+        /* Ensure no star-like styles interfere */
+        .heart-border .heart::before,
+        .heart-border .heart::after,
+        .hearts-background .heart::before,
+        .hearts-background .heart::after {
+            content: none !important; /* Remove any pseudo-elements */
+        }
+
+        /* Footer Note */
+        .footer-note {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            font-size: 1.8rem;
+            opacity: 0;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+            animation: fadeInUp 2.5s ease-in-out forwards;
+            animation-delay: 1.5s;
+            z-index: 2; /* Above hearts background */
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="night-sky">
+        <div class="stars"></div>
+        <div class="moon"></div>
+    </div>
+
+    <!-- Hearts Background for Entire Website -->
+    <div class="hearts-background" id="hearts-background"></div>
+
+    <div class="container">
+        <h1>Happy Birthday, My Eternal Love</h1>
+
+        <!-- 25 Romantic Love Quotes -->
+        <div class="quote">"Your presence is the melody that soothes my soul."</div>
+        <div class="quote">"In your laughter, I find the rhythm of my heart."</div>
+        <div class="quote">"You are the star that guides me through the darkest nights."</div>
+        <div class="quote">"My love for you is an endless river, flowing beyond time."</div>
+        <div class="quote">"With you, every moment is a treasure beyond measure."</div>
+        <div class="quote">"You are the sunrise that paints my world with hope."</div>
+        <div class="quote">"In your eyes, I see the universe I long to explore."</div>
+        <div class="quote">"Your touch ignites a fire that warms my eternity."</div>
+        <div class="quote">"You are the dream I never knew I had."</div>
+        <div class="quote">"My heart beats only to whisper your name."</div>
+        <div class="quote">"With you, I’ve found the meaning of forever."</div>
+        <div class="quote">"You are my sanctuary, my peace, my everything."</div>
+        <div class="quote">"Your love is the light that banishes all shadows."</div>
+        <div class="quote">"In your embrace, I’ve discovered my truest home."</div>
+        <div class="quote">"You are the poetry my soul longs to write."</div>
+        <div class="quote">"Every glance from you is a gift I cherish."</div>
+        <div class="quote">"Your voice is the sweetest song I’ll ever hear."</div>
+        <div class="quote">"My love for you grows deeper with every breath."</div>
+        <div class="quote">"You are the miracle that completes my existence."</div>
+        <div class="quote">"With you, time stands still, yet races with joy."</div>
+        <div class="quote">"You are the compass that leads me to bliss."</div>
+        <div class="quote">"My heart dances to the rhythm of your love."</div>
+        <div class="quote">"You are the flame that lights my endless nights."</div>
+        <div class="quote">"In your smile, I find the promise of forever."</div>
+        <div class="quote">"You are my soul’s eternal companion."</div>
+
+        <!-- 6 Heartfelt Paragraphs -->
+        <div class="paragraph">
+            My Dearest Love, on this sacred day of March 19th, 2025, I celebrate you – the woman who has transformed my life into a symphony of joy and devotion. Your every glance fills me with awe, and your every word is a treasure I hold close to my heart. You are my everything.
+        </div>
+        <div class="paragraph">
+            You are the light that pierces through my darkest moments, the strength that lifts me when I falter, and the beauty that inspires me every single day. My love for you is boundless, stretching beyond the stars and into the infinite realms of eternity. Happy Birthday, my soulmate.
+        </div>
+        <div class="paragraph">
+            To stand by your side is my greatest honor, to love you is my deepest privilege. Your kindness, your grace, your unwavering spirit – they are the gifts that make my world complete. On this day, I pour out my gratitude for the miracle of you.
+        </div>
+        <div class="paragraph">
+            My heart beats for you alone, a rhythm that echoes through every moment we share. You’ve taught me what love truly means – a sacred bond that grows stronger with every passing day. Today, I celebrate the queen of my heart, my eternal muse.
+        </div>
+        <div class="paragraph">
+            With you, I’ve discovered a love so profound, so pure, that it defies all words. You are the sunrise of my mornings, the moonlight of my nights, and the heartbeat of my existence. This birthday is a testament to the infinite love I have for you.
+        </div>
+        <div class="paragraph">
+            My Beloved, you are my partner in this journey of life, my confidante, my joy, my everything. As I wish you a happy birthday, I renew my promise to cherish you, to uplift you, and to love you with every fiber of my being, now and forevermore.
+        </div>
+
+        <!-- For You, My Love Section with Adjusted Images and Overlay Text -->
+        <div class="gallery-section">
+            <h2>For You, My Love</h2>
+            <div class="gallery">
+                <div class="gallery-box">
+                    <img src="images/image1.jpeg" alt="Memory 1">
+                    <div class="overlay-text">You are my world</div>
+                </div>
+                <div class="gallery-box">
+                    <img src="images/image2.jpeg" alt="Memory 2">
+                    <div class="overlay-text">My heart beats for you</div>
+                </div>
+                <div class="gallery-box">
+                    <img src="images/image3.jpeg" alt="Memory 3">
+                    <div class="overlay-text">Forever yours</div>
+                </div>
+                <div class="gallery-box">
+                    <img src="images/image4.jpeg" alt="Memory 4">
+                    <div class="overlay-text">You light up my life</div>
+                </div>
+                <div class="gallery-box">
+                    <img src="images/image5.jpeg" alt="Memory 5">
+                    <div class="overlay-text">My eternal love</div>
+                </div>
+                <div class="gallery-box">
+                    <img src="images/image6.jpeg" alt="Memory 6">
+                    <div class="overlay-text">Together forever</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Surprise Box -->
+        <div class="surprise-box" id="surprise">Tap for a Surprise</div>
+
+        <!-- Refined Proposal Popup with Heart Background -->
+        <div class="popup" id="popup">
+            <div class="heart-border" id="heart-border"></div>
+            <h2>My Eternal Proposal to You</h2>
+            <p>
+                My Beloved, my heart, my everything – in the presence of Allah, the Most Merciful, I come to you with a love so deep it transcends this world. On this sacred day, I ask for your hand, to stand by your side as your husband, to protect you, to cherish you, and to love you with every breath I take. You are my light, my joy, my eternal companion, and I long to build a life with you filled with peace, devotion, and unending love.
+                <br><br>
+                My soul found its match in you, a gift from Allah that I will treasure forever. I promise to hold you close through every storm, to lift you up in every triumph, and to walk with you hand in hand towards Jannah. Your beauty, your spirit, your heart – they captivate me beyond words, and I am endlessly devoted to you.
+                <br><br>
+                Every moment with you is a testament to the mercy of Allah, who brought us together in this divine union. I vow to be your shield, your comfort, and your joy, to fill your days with laughter and your nights with serenity. You are the beat of my heart, the breath in my lungs, the stars in my sky – my love for you is eternal, unshakable, and pure.
+                <br><br>
+                "And of His signs is that He created for you from yourselves mates that you may find tranquility in them; and He placed between you affection and mercy." (Quran 30:21)
+                <br><br>
+                "Our Lord, grant us from our spouses and offspring comfort to our eyes and make us an example for the righteous." (Quran 25:74)
+                <br><br>
+                My Love, will you accept my heart, my soul, and my promise to love you eternally? Will you be my wife, my partner, my forever? Let us embark on this sacred journey together, hand in hand, heart to heart, until we meet in the gardens of paradise.
+            </p>
+        </div>
+    </div>
+
+    <!-- Footer Note -->
+    <div class="footer-note">Made with Infinite Love by Your Beloved Husband</div>
+
+    <script>
+        // Log to confirm moon element exists
+        const moonElement = document.querySelector('.moon');
+        if (moonElement) {
+            console.log("Moon element is present in the DOM:", moonElement);
+        } else {
+            console.error("Moon element not found in the DOM!");
+        }
+
+        // Generate Random Stars
+        const starsContainer = document.querySelector('.stars');
+        for (let i = 0; i < 150; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.width = `${Math.random() * 4}px`;
+            star.style.height = star.style.width;
+            star.style.top = `${Math.random() * 100}%`;
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.animationDelay = `${Math.random() * 4}s`;
+            starsContainer.appendChild(star);
+        }
+
+        // Scroll Animation for Quotes and Paragraphs
+        const elements = document.querySelectorAll('.quote, .paragraph');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.3 });
+
+        elements.forEach(element => observer.observe(element));
+
+        // Surprise Popup
+        const surpriseBox = document.getElementById('surprise');
+        const popup = document.getElementById('popup');
+        const heartBorder = document.getElementById('heart-border');
+
+        surpriseBox.addEventListener('click', () => {
+            popup.classList.toggle('active');
+            if (popup.classList.contains('active')) {
+                generateHeartBorder();
+            } else {
+                heartBorder.innerHTML = ''; // Clear hearts when popup closes
+            }
+        });
+
+        // Close Popup on Click Outside
+        document.addEventListener('click', (e) => {
+            if (!popup.contains(e.target) && e.target !== surpriseBox) {
+                popup.classList.remove('active');
+                heartBorder.innerHTML = ''; // Clear hearts
+            }
+        });
+
+        // Function to Generate Hearts (Reusable for both popup and website background)
+        function generateHearts(container, heartCount, height, opacity) {
+            const containerHeight = height || container.scrollHeight; // Use provided height or scrollHeight
+            const containerWidth = container.offsetWidth || window.innerWidth; // Use container width or window width
+
+            // Define the moon's bounding box (top-right corner)
+            const moonTop = 20; // 20px from top
+            const moonRight = 20; // 20px from right
+            const moonSize = 150; // 150px width and height
+            const moonLeftBoundary = 100 - ((moonRight + moonSize) / containerWidth) * 100; // Convert to percentage
+            const moonTopBoundary = (moonTop + moonSize) / containerHeight * 100; // Convert to percentage
+
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                const size = Math.random() * 25 + 15; // Random size between 15px and 40px
+                heart.style.width = `${size}px`;
+                heart.style.height = `${size}px`;
+
+                // Generate random positions and ensure they don't overlap with the moon
+                let topPercent, leftPercent;
+                do {
+                    topPercent = Math.random() * 100; // Percentage for top position
+                    leftPercent = Math.random() * 100; // Percentage for left position
+                } while (
+                    leftPercent >= moonLeftBoundary && // Check if heart is within moon's horizontal range
+                    topPercent <= moonTopBoundary // Check if heart is within moon's vertical range
+                );
+
+                heart.style.top = `${topPercent * containerHeight / 100}px`; // Convert back to pixels
+                heart.style.left = `${leftPercent}%`;
+                heart.style.animationDelay = `${Math.random() * 4}s`; // Staggered animation
+                heart.style.opacity = opacity || 0.5; // Apply specified opacity
+
+                // Use SVG for heart shape
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('width', '100%');
+                svg.setAttribute('height', '100%');
+                svg.setAttribute('viewBox', '0 0 24 24');
+                svg.setAttribute('fill', '#ff9999');
+
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z');
+                svg.appendChild(path);
+
+                heart.appendChild(svg);
+                container.appendChild(heart);
+            }
+
+            // Set the container height to match the content height
+            container.style.height = `${containerHeight}px`;
+        }
+
+        // Generate Hearts for Popup
+        function generateHeartBorder() {
+            const popupHeight = popup.scrollHeight;
+            heartBorder.innerHTML = ''; // Clear previous hearts
+            generateHearts(heartBorder, 40, popupHeight, 0.5); // Popup hearts with higher opacity
+        }
+
+        // Generate Hearts for Website Background
+        const heartsBackground = document.getElementById('hearts-background');
+        const documentHeight = Math.max(
+            document.body.scrollHeight,
+            document.documentElement.scrollHeight,
+            document.body.offsetHeight,
+            document.documentElement.offsetHeight,
+            document.body.clientHeight,
+            document.documentElement.clientHeight
+        );
+        generateHearts(heartsBackground, 60, documentHeight, 0.5); // Website hearts with specified opacity
+    </script>
+</body>
+</html>
